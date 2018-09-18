@@ -46,7 +46,7 @@ function main() {
 
     var initializePromise = initialize();
     initializePromise.then(function(params) { 
-        console.debug("DEBUG got config: " + JSON.stringify(params));
+        console.debug("got twitter config. starting stream.");
         stream(params);
     });
 }
