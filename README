@@ -1,3 +1,5 @@
 README
 
 --env option to docker run. 
+
+docker run -e AWS_ACCESS_KEY_ID=xyz -e AWS_SECRET_ACCESS_KEY=aaa AWS_DEFAULT_REGION="ap-southeast-1" -t franklogic/twitterfeed
