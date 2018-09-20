@@ -2,6 +2,7 @@ var Twitter = require('twitter');
 const util = require('util');
 
 var phrases="xoyxoz";
+var feed_api_endpoint="https://56vwcxeu8c.execute-api.ap-southeast-1.amazonaws.com/test/feed";
 
 function initialize() {
     // Read config from S3.
@@ -16,10 +17,10 @@ function initialize() {
         console.log("Reading config from S3");
         s3.getObject(getParams, function (err, data) {
             if (err) {
-                console.log(err);
+                console.error(err);
                 reject(err);
             } else {
-                console.log("Read config from S3: success")
+                console.info("Read config from S3: success")
                 return resolve(JSON.parse(data.Body.toString()));
             }
         })
@@ -29,15 +30,20 @@ function initialize() {
 function stream(params) {
     // create Twitter feed
     var client = new Twitter(params);
-    console.log("Streaming for phrases: " + phrases);
+    console.info("Streaming for phrases: " + phrases);
     client.stream('statuses/filter', {track: phrases},  function(stream) {
+
       stream.on('data', function(tweet) {
-        console.log("Tweet Text: " + tweet.text);
-        console.log(util.inspect(tweet));
+        console.info("Received Tweet. Text: " + tweet.text);
+        console.info(util.inspect(tweet).join(' ')); // log json on single line.
+        // Call API Gateway.
+        console.info("calling API GW");
+
       });
       stream.on('error', function(error) {
-        console.log(error);
+        console.error(error);
       });
+
     });
 }
 
