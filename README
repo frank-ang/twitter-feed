@@ -1,5 +1,16 @@
-README
+# README
 
---env option to docker run. 
+## Build and test 
+
+### Local test on laptop with creds. pass --env option to docker run. 
 
 docker run -e AWS_ACCESS_KEY_ID=xyz -e AWS_SECRET_ACCESS_KEY=aaa AWS_DEFAULT_REGION="ap-southeast-1" -t franklogic/twitterfeed
+
+## Test API GW endpoint 
+
+### Send test POST to API GW
+curl -vv -X POST -d '{ "stateMachineArn":"arn:aws:states:ap-southeast-1:109826131385:stateMachine:HelloWorld" }' https://56vwcxeu8c.execute-api.ap-southeast-1.amazonaws.com/test/feed
+
+### Send test GET to API GW
+curl -vv  -X GET https://56vwcxeu8c.execute-api.ap-southeast-1.amazonaws.com/test/feed
+

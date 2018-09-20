@@ -1,6 +1,8 @@
 var Twitter = require('twitter');
 const util = require('util');
 
+var phrases="xoyxoz";
+
 function initialize() {
     // Read config from S3.
     var aws = require('aws-sdk'); 
@@ -27,11 +29,8 @@ function initialize() {
 function stream(params) {
     // create Twitter feed
     var client = new Twitter(params);
-    // client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    //  if (!error) {
-    //    console.log(tweets);
-    console.log("Streaming...");
-    client.stream('statuses/filter', {track: 'xoyxoz'},  function(stream) {
+    console.log("Streaming for phrases: " + phrases);
+    client.stream('statuses/filter', {track: phrases},  function(stream) {
       stream.on('data', function(tweet) {
         console.log("Tweet Text: " + tweet.text);
         console.log(util.inspect(tweet));
