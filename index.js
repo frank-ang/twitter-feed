@@ -1,16 +1,20 @@
-var Twitter = require('twitter');
+const Twitter = require('twitter');
+const request = require('request');
 const util = require('util');
+const aws = require('aws-sdk'); 
 
-var phrases="xoyxoz";
-var feed_api_endpoint="https://56vwcxeu8c.execute-api.ap-southeast-1.amazonaws.com/test/feed";
+const phrases=process.env.PHRASES || "xoyxoz";
+const feed_api_endpoint=process.env.ENDPOINT || "https://56vwcxeu8c.execute-api.ap-southeast-1.amazonaws.com/test/feed";
+const configS3Bucket=process.env.CONFIG_S3_BUCKET || 'frankang-secure-config';
+const configS3Key=process.env.CONFIG_S3_KEY || 'demo/twitter-config.json';
 
 function initialize() {
-    // Read config from S3.
-    var aws = require('aws-sdk'); 
-    var s3 = new aws.S3();
+    // Read config from S3. TODO better way is use secrets manager.
+    const s3 = new aws.S3();
+
     var getParams = {
-        Bucket: 'frankang-secure-config',
-        Key: 'demo/twitter-config.json'
+        Bucket: configS3Bucket,
+        Key: configS3Key
     }
     
     return new Promise(function(resolve, reject) {
@@ -35,9 +39,24 @@ function stream(params) {
 
       stream.on('data', function(tweet) {
         console.info("Received Tweet. Text: " + tweet.text);
-        console.info(util.inspect(tweet).join(' ')); // log json on single line.
-        // Call API Gateway.
+        // console.info(JSON.stringify(tweet).replace(/[\r\n]+/g, '\n')); // log json on single line.
+
+        // Post feed to API Gateway.
         console.info("calling API GW");
+        var options = { 
+            url:feed_api_endpoint,
+            json: tweet.text
+        }
+        request.post(options, (err, res, body) => {
+          if (err) { 
+            console.error("Error while posting feed to API GW, status: " + res.statusCode + ", " + res.statusMessage);
+            console.error(res.body);
+            return console.error(err);
+          } else {
+            console.log("Posted feed to API Gateway. Tweet text: " + tweet.text)
+          }
+
+        });
 
       });
       stream.on('error', function(error) {
