@@ -45,7 +45,7 @@ function stream(params) {
         console.info("calling API GW");
         var options = { 
             url:feed_api_endpoint,
-            json: tweet.text
+            json: { text: tweet.text }
         }
         request.post(options, (err, res, body) => {
           if (err) { 
