@@ -9,7 +9,7 @@ const configS3Bucket=process.env.CONFIG_S3_BUCKET || 'frankang-secure-config';
 const configS3Key=process.env.CONFIG_S3_KEY || 'demo/twitter-config.json';
 
 function initialize() {
-    // Read config from S3. TODO better way is use secrets manager.
+    // Read config from S3. TODO More secure way is use parameter store or secrets manager.
     const s3 = new aws.S3();
 
     var getParams = {
